@@ -5,6 +5,7 @@ namespace ManeOlawale\Laravel\Termii\Channels;
 use ManeOlawale\Laravel\Termii\Messages\TermiiMessage;
 use Illuminate\Notifications\Notification;
 use ManeOlawale\Laravel\Termii\Termii;
+use ManeOlawale\Termii\Client;
 
 class TermiiSmsChannel
 {
@@ -53,7 +54,7 @@ class TermiiSmsChannel
         if (is_string($message)) {
             $message = new TermiiMessage($message);
         }
-        
+
         if ($message->client){
             $client = $this->termii->client();
             $this->termii->usingClient($message->client);
@@ -66,20 +67,7 @@ class TermiiSmsChannel
         }
 
         return $result;
-        
-/* 
-        $payload = [
-            'type' => $message->type,
-            'from' => $message->from ?: $this->from,
-            'to' => $to,
-            'text' => trim($message->content),
-            'client-ref' => $message->clientReference,
-        ];
 
-        if ($message->statusCallback) {
-            $payload['callback'] = $message->statusCallback;
-        }
-
-        return ($message->client ?? $this->termii)->sms->send($to, $message); */
     }
+
 }

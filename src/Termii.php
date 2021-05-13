@@ -24,7 +24,7 @@ class Termii
         $this->client = $client;
     }
 
-    public function __get(string $tag)
+    public function __call(string $tag, array $argv)
     {
         return $this->client->api($tag);
     }
@@ -54,7 +54,7 @@ class Termii
 
     public function send(string $to, string $message, string $from = null, string $channel = null)
     {
-        $this->client->sms->send($to, $message, $from, $channel);
+        return $this->client->sms->send($to, $message, $from, $channel);
     }
 
 }
