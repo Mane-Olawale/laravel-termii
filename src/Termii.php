@@ -40,6 +40,17 @@ class Termii
     }
 
     /**
+     * Make new teken
+     * 
+     * @param string $key
+     * @param string $signature
+     */
+    public function verify(string $key, string $signature = null)
+    {
+        return new Entities\Token($key, $signature);
+    }
+
+    /**
      * Change the Termii client instance.
      *
      * @param  \ManeOlawale\Termii\Client  $client
