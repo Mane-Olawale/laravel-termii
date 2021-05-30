@@ -19,7 +19,7 @@ class Termii
      *
      * @param \ManeOlawale\Termii\Client $client
      */
-    public function __contruct( Client $client )
+    public function __construct( Client $client )
     {
         $this->client = $client;
     }
