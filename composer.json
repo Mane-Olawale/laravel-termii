@@ -18,10 +18,10 @@
 	"require": {
 		"php": ">=7.2",
         "mane-olawale/termii": "^1.0",
-        "illuminate/notifications": "~5.8.0|^6.0|^7.0|^8.0"
+        "illuminate/notifications": "^6.0|^7.0|^8.0",
+        "illuminate/support": "^6.0|^7.0|^8.0"
 	},
     "require-dev": {
-        "php": ">=7.2.0",
         "phpunit/phpunit": "~8.0|~9.0",
         "mockery/mockery": "~1.4"
     },
@@ -30,6 +30,11 @@
             "ManeOlawale\\Laravel\\Termii\\": "src/"
         }
     },
+    "autoload-dev": {
+         "psr-4": {
+             "ManeOlawale\\Laravel\\Termii\\Tests\\": "tests/"
+         }
+     },
     "scripts": {
         "tests": "./vendor/bin/phpunit --verbose"
     },
