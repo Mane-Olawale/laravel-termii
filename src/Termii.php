@@ -19,12 +19,12 @@ class Termii
      *
      * @param \ManeOlawale\Termii\Client $client
      */
-    public function __contruct( Client $client )
+    public function __construct( Client $client )
     {
         $this->client = $client;
     }
 
-    public function __get(string $tag)
+    public function __call(string $tag, array $argv)
     {
         return $this->client->api($tag);
     }
@@ -37,6 +37,17 @@ class Termii
     public function client()
     {
         return $this->client;
+    }
+
+    /**
+     * Make new teken
+     * 
+     * @param string $key
+     * @param string $signature
+     */
+    public function verify(string $key, string $signature = null)
+    {
+        return new Entities\Token($key, $signature);
     }
 
     /**
@@ -54,7 +65,7 @@ class Termii
 
     public function send(string $to, string $message, string $from = null, string $channel = null)
     {
-        $this->client->sms->send($to, $message, $from, $channel);
+        return $this->client->sms->send($to, $message, $from, $channel);
     }
 
 }

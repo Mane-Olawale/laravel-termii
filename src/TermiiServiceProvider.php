@@ -19,7 +19,7 @@ class TermiiServiceProvider extends ServiceProvider
 
         $this->app->singleton( Termii::class, function (){
 
-            return (new Termii)->usingClient( new TermiiClient( config('termii.key'), $this->getOptions()) );
+            return new Termii( new TermiiClient( config('termii.key'), $this->getOptions()) ) ;
 
         });
 
