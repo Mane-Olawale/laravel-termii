@@ -29,7 +29,7 @@ class TermiiMessage extends Message
     {
         $lines = (($this->content)? "\n" : "").implode( "\n",$this->lines);
 
-        return $this->content.$lines;
+        return trim($this->content.$lines);
     }
 
 }
