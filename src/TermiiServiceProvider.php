@@ -5,6 +5,7 @@ namespace ManeOlawale\Laravel\Termii;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Notifications\ChannelManager;
+use Illuminate\Foundation\Application;
 use ManeOlawale\Termii\Client as TermiiClient;
 
 class TermiiServiceProvider extends ServiceProvider
@@ -17,17 +18,24 @@ class TermiiServiceProvider extends ServiceProvider
     public function register()
     {
 
-        $this->app->singleton( Termii::class, function (){
 
-            return new Termii( new TermiiClient( config('termii.key'), $this->getOptions()) ) ;
+        $this->app->bind( TermiiClient::class, function (){
+
+            return new TermiiClient( config('termii.key'), $this->getOptions());
+
+        });
+
+        $this->app->singleton( Termii::class, function ( Application $app){
+
+            return new Termii( $app->make(TermiiClient::class) ) ;
 
         });
 
 
         Notification::resolved(function (ChannelManager $service) {
-            $service->extend('termii', function ($app) {
+            $service->extend('termii', function ( Application $app) {
                 return new Channels\TermiiSmsChannel(
-                    $app->make(Termii::class),
+                    $app->make(TermiiClient::class),
                     config('termii.sender_id')
                 );
             });

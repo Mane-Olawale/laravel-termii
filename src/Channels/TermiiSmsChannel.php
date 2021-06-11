@@ -4,7 +4,6 @@ namespace ManeOlawale\Laravel\Termii\Channels;
 
 use ManeOlawale\Laravel\Termii\Messages\TermiiMessage;
 use Illuminate\Notifications\Notification;
-use ManeOlawale\Laravel\Termii\Termii;
 use ManeOlawale\Termii\Client;
 
 class TermiiSmsChannel
@@ -30,7 +29,7 @@ class TermiiSmsChannel
      * @param  string  $from
      * @return void
      */
-    public function __construct( Termii $termii, string $from)
+    public function __construct( Client $termii, string $from)
     {
         $this->from = $from;
         $this->termii = $termii;
@@ -55,16 +54,9 @@ class TermiiSmsChannel
             $message = new TermiiMessage($message);
         }
 
-        if ($message->client){
-            $client = $this->termii->client();
-            $this->termii->usingClient($message->client);
-        }
+        $client = ($message->client instanceof Client)? $message->client : $this->termii;
 
-        $result = $this->termii->send($to, $message->getContent(), $message->from, $message->channel);
-
-        if ($message->client){
-            $this->termii->usingClient($client);
-        }
+        $result = $client->sms->send($to, $message->getContent(), $message->from ?? $this->from, $message->channel);
 
         return $result;
 
