@@ -15,21 +15,25 @@ use ManeOlawale\Termii\Api\Sms;
 
 class TermiiChannelTest extends TestCase
 {
-    public function test_sms_is_sent_via_termii()
+    public function testSmsIsSentViaTermii()
     {
-        $notification = new TermiiTestNotification;
-        $notifiable = new TermiiTestNotifiable;
+        $notification = new TermiiTestNotification();
+        $notifiable = new TermiiTestNotifiable();
 
 
         $channel = new TermiiSmsChannel(
-            $termii = Mock::mock(Client::class), 'Olawale'
+            $termii = Mock::mock(Client::class),
+            'Olawale'
         );
 
         $sms = Mock::mock(Sms::class);
 
         $sms->shouldReceive('send')
             ->with(
-                $notifiable->phone, 'Hello world', 'Olawale', NULL
+                $notifiable->phone,
+                'Hello world',
+                'Olawale',
+                null
             )
             ->once();
 
@@ -43,7 +47,7 @@ class TermiiChannelTest extends TestCase
         $channel->send($notifiable, $notification);
     }
 
-    public function test_sms_is_sent_via_custom_client()
+    public function testSmsIsSentViaCustomClient()
     {
 
         $customClient = Mock::mock(Client::class);
@@ -51,11 +55,14 @@ class TermiiChannelTest extends TestCase
         $sms = Mock::mock(Sms::class);
 
         $notification = new TermiiTestNotificationWithCustomClient($customClient);
-        $notifiable = new TermiiTestNotifiable;
+        $notifiable = new TermiiTestNotifiable();
 
         $sms->shouldReceive('send')
             ->with(
-                $notifiable->phone, 'Hello world', 'Olawale', NULL
+                $notifiable->phone,
+                'Hello world',
+                'Olawale',
+                null
             )
             ->once();
 
@@ -67,20 +74,22 @@ class TermiiChannelTest extends TestCase
             ->andReturn($sms);
 
         $channel = new TermiiSmsChannel(
-            Mock::mock(Client::class), 'Olawale'
+            Mock::mock(Client::class),
+            'Olawale'
         );
 
         $channel->send($notifiable, $notification);
     }
 
-    public function test_sms_is_sent_via_custom_from()
+    public function testSmsIsSentViaCustomFrom()
     {
-        $notification = new TermiiTestNotificationWithCustomFrom;
-        $notifiable = new TermiiTestNotifiable;
+        $notification = new TermiiTestNotificationWithCustomFrom();
+        $notifiable = new TermiiTestNotifiable();
 
 
         $channel = new TermiiSmsChannel(
-            $termii = Mock::mock(Client::class), 'Olawale'
+            $termii = Mock::mock(Client::class),
+            'Olawale'
         );
 
         $sms = Mock::mock(Sms::class);
@@ -101,7 +110,7 @@ class TermiiChannelTest extends TestCase
         $channel->send($notifiable, $notification);
     }
 
-    public function test_sms_is_sent_via_custom_from_and_client()
+    public function testSmsIsSentViaCustomFromAndClient()
     {
 
         $customClient = Mock::mock(Client::class);
@@ -111,11 +120,14 @@ class TermiiChannelTest extends TestCase
         $notification = new TermiiTestNotificationWithCustomClientAndFrom(
             $customClient
         );
-        $notifiable = new TermiiTestNotifiable;
+        $notifiable = new TermiiTestNotifiable();
 
         $sms->shouldReceive('send')
             ->with(
-                $notifiable->phone, 'Hello world', 'Adedotun', NULL
+                $notifiable->phone,
+                'Hello world',
+                'Adedotun',
+                null
             )
             ->once();
 
@@ -132,5 +144,4 @@ class TermiiChannelTest extends TestCase
 
         $channel->send($notifiable, $notification);
     }
-
 }
