@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 use ManeOlawale\Termii\Client as TermiiClient;
 
 class TermiiServiceProvider extends ServiceProvider
@@ -18,7 +20,7 @@ class TermiiServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(TermiiClient::class, function () {
-            return new TermiiClient(\config('termii.key'), $this->getOptions());
+            return new TermiiClient(Config::get('termii.key'), $this->getOptions());
         });
 
         $this->app->singleton(Termii::class, function (Application $app) {
@@ -26,29 +28,44 @@ class TermiiServiceProvider extends ServiceProvider
         });
 
         Notification::resolved(function (ChannelManager $service) {
-            $service->extend('termii', function ( Application $app) {
+            $service->extend('termii', function (Application $app) {
                 return new Channels\TermiiSmsChannel(
                     $app->make(TermiiClient::class),
-                    \config('termii.sender_id')
+                    Config::get('termii.sender_id')
                 );
             });
         });
     }
 
+    /**
+     * Boot the provider
+     *
+     * @return void
+     */
     public function boot()
     {
         $this->addPublishes();
         $this->addCommands();
     }
 
+    /**
+     * Register publishable assets
+     *
+     * @return void
+     */
     public function addPublishes()
     {
         $this->publishes([
-            __DIR__ . '/../config/termii.php' => \config_path('termii.php')
+            __DIR__ . '/../config/termii.php' => App::configPath('termii.php')
 
         ], 'termii.config');
     }
 
+    /**
+     * Add termii commands
+     *
+     * @return void
+     */
     protected function addCommands()
     {
         // Console only commands
@@ -59,18 +76,23 @@ class TermiiServiceProvider extends ServiceProvider
         }
     }
 
-    public function getOptions()
+    /**
+     * Get array of options from the config
+     *
+     * @return array
+     */
+    public function getOptions(): array
     {
         return [
-            'sender_id' => \config('termii.sender_id'),
-            'channel' =>  \config('termii.channel'),
-            "attempts" => \config('termii.pin.attempts'),
-            "time_to_live" => \config('termii.pin.time_to_live'),
-            "length" => \config('termii.pin.length'),
-            "placeholder" => \config('termii.pin.placeholder'),
-            'pin_type' => \config('termii.pin.type'),
-            'message_type' => \config('termii.message_type'),
-            'type' => \config('termii.type'),
+            'sender_id' => Config::get('termii.sender_id'),
+            'channel' =>  Config::get('termii.channel'),
+            "attempts" => Config::get('termii.pin.attempts'),
+            "time_to_live" => Config::get('termii.pin.time_to_live'),
+            "length" => Config::get('termii.pin.length'),
+            "placeholder" => Config::get('termii.pin.placeholder'),
+            'pin_type' => Config::get('termii.pin.type'),
+            'message_type' => Config::get('termii.message_type'),
+            'type' => Config::get('termii.type'),
         ];
     }
 }

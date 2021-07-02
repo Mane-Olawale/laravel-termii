@@ -24,7 +24,7 @@ return [
      * Sms Name for Termii message
      *
      */
-    "sms_name" =>  env('TERMII_SMS_NAME', env('APP_NAME','Termii')),
+    "sms_name" =>  env('TERMII_SMS_NAME', env('APP_NAME', 'Termii')),
 
     /**
      * User agent for Termii message

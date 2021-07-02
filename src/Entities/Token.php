@@ -1,10 +1,12 @@
-<?php 
+<?php
 
 namespace ManeOlawale\Laravel\Termii\Entities;
 
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 use ManeOlawale\Laravel\Termii\Facades\Termii;
 
 class Token
@@ -74,10 +76,10 @@ class Token
      * @var array
      */
     protected $pin_options = [];
-    
+
     /**
      * Create a new instance
-     * 
+     *
      * @param string $key
      * @param string $signature
      */
@@ -85,9 +87,9 @@ class Token
     {
         $this->key = $key;
 
-        if ($signature){
+        if ($signature) {
             $this->loadFromSignature($signature);
-        } else if ( ($session = $this->getRequest()->session()) ) {
+        } elseif (($session = $this->getRequest()->session())) {
             $this->loadFromSession($session, $key);
         }
     }
@@ -102,7 +104,7 @@ class Token
 
     /**
      * Fetch the payload from an encrypted string
-     * 
+     *
      * @param string @signature
      * @return void
      */
@@ -115,94 +117,76 @@ class Token
         }
 
         $this->signature = $signature;
-
         $this->payload = json_decode($json, true) ?? [];
-        
         $this->updateProperties();
-
-        $this->loaded = ($this->payload)? true : false;
+        $this->loaded = ($this->payload) ? true : false;
     }
 
     /**
      * Fetch the payload from session
-     * 
+     *
      * @param string @key
      * @return void
      */
     protected function loadFromSession($session, string $key)
     {
-        
         $this->payload = json_decode($session->get($key), true) ?? [];
-        
         $this->updateProperties();
-
-        $this->loaded = ($this->payload)? true : false;
+        $this->loaded = ($this->payload) ? true : false;
     }
 
     /**
      * Flush all the content and session of the instance
      * left only with phone number, key and text
-     * 
+     *
      * @return self $this;
      */
     public function flush()
     {
 
         $this->pin_id = null;
-
         $this->pin = null;
-
         $this->expires_at = null;
-
         $this->generated_at = null;
-
         $this->loaded = false;
-
         $this->signature = null;
-
         $this->payload = [];
 
-        if ( ($session = $this->getRequest()->session())) {
+        if (($session = $this->getRequest()->session())) {
             $session->forget($this->key);
         }
-        
+
         return $this;
     }
 
     /**
      * Update the instance properties from the payload
-     * 
+     *
      * @return void
      */
     protected function updateProperties()
     {
-        if (!$this->payload){
+        if (!$this->payload) {
             return false;
         }
 
         $this->key = $this->payload['key'];
-
         $this->pin_id = $this->payload['pin_id'];
-
         $this->pin = $this->payload['pin'] ?? null;
-
         $this->expires_at = Date::parse($this->payload['expires_at']);
-
         $this->generated_at = Date::parse($this->payload['generated_at']);
-
         $this->phonenumber = $this->payload['phonenumber'];
-
         $this->in_app = $this->payload['in_app'];
     }
 
     /**
      * Make the token an in-app token, Only for non-loaded instance of this class
-     * 
+     *
      * @return self $this
      */
     public function inApp()
     {
-        if ($this->loaded){
+        if ($this->loaded) {
             return $this;
         }
 
@@ -213,54 +197,52 @@ class Token
 
     /**
      * Set the phonenumber of the token
-     * 
+     *
      * @return self $this
      */
     public function to(string $phonenumber)
     {
-        if ($this->loaded){
+        if ($this->loaded) {
             return $this;
         }
 
         $this->phonenumber = $phonenumber;
-
         return $this;
     }
 
     /**
      * Set the text of the token
-     * 
+     *
      * @return self $this
      */
     public function text(string $text)
     {
-        if ($this->loaded){
+        if ($this->loaded) {
             return $this;
         }
 
         $this->text = $text;
-
         return $this;
     }
 
     /**
      * Dynamic function calls to set the pin option
-     * 
+     *
      * @return self $this
      */
     public function __call(string $name, array $parameters)
     {
-        $this->pin_options[$name] = count($parameters)? $parameters[0] : true;
+        $this->pin_options[$name] = count($parameters) ? $parameters[0] : true;
     }
 
     /**
      * Get the pin id
-     * 
+     *
      * @return string
      */
     public function id()
     {
-        if ($this->loaded){
+        if ($this->loaded) {
             return false;
         }
         return $this->pin_id;
@@ -268,7 +250,7 @@ class Token
 
     /**
      * Get the key of the instance
-     * 
+     *
      * @return string
      */
     public function key()
@@ -277,12 +259,12 @@ class Token
     }
 
     /**
-     * Get the pin, Only for in-app tokens     * 
+     * Get the pin, Only for in-app tokens
      * @return string
      */
     public function pin()
     {
-        if ($this->loaded){
+        if ($this->loaded) {
             return false;
         }
         return $this->pin;
@@ -290,7 +272,7 @@ class Token
 
     /**
      * Get the signature
-     * * 
+     *
      * @return string
      */
     public function signature()
@@ -300,12 +282,12 @@ class Token
 
     /**
      * This generate a new token resourse from termii
-     * 
+     *
      * @param array $options
      */
-    public function start( array $options = [])
+    public function start(array $options = [])
     {
-        if ($this->loaded){
+        if ($this->loaded) {
             return false;
         }
 
@@ -313,102 +295,78 @@ class Token
 
         $options = $this->pin_options + $options;
 
-        if ($this->in_app){
+        if ($this->in_app) {
             $data = $token->sendInAppToken($this->phonenumber, $options);
         } else {
             $data = $token->sendToken($this->phonenumber, $this->text, $options);
         }
 
-
         $this->payload['key'] = $this->key;
 
-        if ($this->in_app){
-
+        if ($this->in_app) {
             $this->payload['pin_id'] = $data['data']['pin_id'];
-    
             $this->payload['pin'] = $data['data']['otp'];
-
             $this->payload['phonenumber'] =  $data['data']['phone_number'];
-
-        }else{
-
+        } else {
             $this->payload['pin_id'] = $data['pinId'];
-    
             $this->payload['pin'] = null;
-
             $this->payload['phonenumber'] =  $data['to'];
-            
         }
 
-        $this->payload['expires_at'] = (string)Date::now()->addMinutes($options['time_to_live'] ?? config('pin.time_to_live'));
-
+        $this->payload['expires_at'] = (string)Date::now()->addMinutes($options['time_to_live'] ??
+            Config::get('pin.time_to_live'));
         $this->payload['generated_at'] = (string)Date::now();
-
         $this->payload['in_app'] = $this->in_app;
-
-    
         $this->updateProperties();
-
         $this->loaded = true;
 
-        if ( ($session = $this->getRequest()->session())) {
+        if (($session = $this->getRequest()->session())) {
             $session->put($this->key, json_encode($this->payload));
         }
-
-        
 
         return $this;
     }
 
     /**
-     * Change if a 
+     * Check if the token is valid
+     *
+     * @return bool
      */
     public function isValid()
     {
-        if (!$this->loaded) return false;
+        if (!$this->loaded) {
+            return false;
+        }
 
         return $this->pin_id && $this->expires_at > Date::now();
     }
 
     /**
      * Verify the token
-     * 
+     *
      * @param string
      */
     public function verify(string $pin)
     {
-        if (!is_int($pin) && !is_string($pin)){
+        if (!is_int($pin) && !is_string($pin)) {
             return false;
         }
 
-        if ($this->in_app){
-
+        if ($this->in_app) {
             return ($this->pin === $pin);
-
-        }else{
-
+        } else {
             $token = Termii::token();
-            
-            return $token->verified($this->pin_id, $pin);;
+            return $token->verified($this->pin_id, $pin);
         }
     }
 
-    public function __serialize(): array
-    {
-        return $this->payload;
-    }
-
-    public function __unserialize(array $data): void
-    {
-        $this->payload = $data;
-        
-        $this->updateProperties();
-    }
-
+    /**
+     * Cast the token to a string signature
+     *
+     * @return string
+     */
     public function __toString()
     {
-        return json_encode($this->payload);
+        return $this->signature();
     }
-
-
 }
