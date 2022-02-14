@@ -96,17 +96,21 @@ class Token
 
         if ($signature) {
             $this->loadFromSignature($signature);
-        } elseif (($session = $this->getRequest()->session())) {
-            $this->loadFromSession($session, $tag);
+        } elseif ($this->session()) {
+            $this->loadFromSession($tag);
         }
     }
 
     /**
      * Get the current HTTP request
      */
-    public function getRequest()
+    public function session()
     {
-        return App::make('request');
+        if (!App::make('request')->hasSession()) {
+            return false;
+        }
+
+        return App::make('request')->session();
     }
 
     /**
@@ -135,9 +139,9 @@ class Token
      * @param string $tag
      * @return void
      */
-    protected function loadFromSession($session, string $tag)
+    protected function loadFromSession(string $tag)
     {
-        $this->payload = json_decode($session->get($tag), true) ?? [];
+        $this->payload = json_decode($this->session()->get($tag), true) ?? [];
         $this->updateProperties();
         $this->loaded = ($this->payload) ? true : false;
     }
@@ -159,7 +163,7 @@ class Token
         $this->signature = null;
         $this->payload = [];
 
-        if (($session = $this->getRequest()->session())) {
+        if (($session = $this->session())) {
             $session->forget($this->tag);
         }
 
@@ -341,7 +345,7 @@ class Token
         $this->updateProperties();
         $this->loaded = true;
 
-        if (($session = $this->getRequest()->session())) {
+        if (($session = $this->session())) {
             $session->put($this->tag, json_encode($this->payload));
         }
 
