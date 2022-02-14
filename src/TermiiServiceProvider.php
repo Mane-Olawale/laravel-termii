@@ -19,8 +19,12 @@ class TermiiServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(TermiiClient::class, function () {
-            return new TermiiClient(Config::get('termii.key'), $this->getOptions());
+        $this->app->singleton(HttpManager::class, function () {
+            return new HttpManager();
+        });
+
+        $this->app->singleton(TermiiClient::class, function (Application $app) {
+            return new TermiiClient(Config::get('termii.key'), $this->getOptions(), $app->make(HttpManager::class));
         });
 
         $this->app->singleton(Termii::class, function (Application $app) {
