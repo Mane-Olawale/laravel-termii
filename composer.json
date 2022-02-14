@@ -17,11 +17,12 @@
     ],
 	"require": {
 		"php": ">=7.2",
-        "mane-olawale/termii": "^1.0",
+        "mane-olawale/termii": "^1.2",
         "illuminate/notifications": "^6.0|^7.0|^8.0",
         "illuminate/support": "^6.0|^7.0|^8.0"
 	},
     "require-dev": {
+        "orchestra/testbench": "^4.0|^5.0|^6.0|^7.0",
         "phpunit/phpunit": "~8.0|~9.0",
         "mockery/mockery": "~1.4"
     },
@@ -36,7 +37,7 @@
          }
      },
     "scripts": {
-        "tests": "./vendor/bin/phpunit --verbose"
+        "test": "./vendor/bin/phpunit --verbose"
     },
     "extra": {
         "laravel": {

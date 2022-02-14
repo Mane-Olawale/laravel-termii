@@ -7,15 +7,21 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
-use ManeOlawale\Laravel\Termii\Facades\Termii;
+use ManeOlawale\Laravel\Termii\Termii;
 
 class Token
 {
     /**
-     * The key to referrence the token
+     * Instance of laravel termii
+     * @var \ManeOlawale\Laravel\Termii\Termii
+     */
+    public $termii;
+
+    /**
+     * The tag to referrence the token
      * @var string
      */
-    public $key;
+    public $tag;
 
     /**
      * The token payload
@@ -39,7 +45,7 @@ class Token
      * The pin itself, Only available after generation or resolving a token signature of in-app token
      * @var string
      */
-    protected $pin;
+    public $pin;
 
     /**
      * The pin itself, Only available after generation or resolving a token signature of in-app token
@@ -57,7 +63,7 @@ class Token
      * This flag indicates that the payload and properties are populated
      * @var boolean false
      */
-    public $loaded = false;
+    protected $loaded = false;
 
     /**
      * The recieving phone number
@@ -80,17 +86,18 @@ class Token
     /**
      * Create a new instance
      *
-     * @param string $key
+     * @param string $tag
      * @param string $signature
      */
-    public function __construct(string $key, string $signature = null)
+    public function __construct(Termii $termii, string $tag, string $signature = null)
     {
-        $this->key = $key;
+        $this->termii = $termii;
+        $this->tag = $tag;
 
         if ($signature) {
             $this->loadFromSignature($signature);
         } elseif (($session = $this->getRequest()->session())) {
-            $this->loadFromSession($session, $key);
+            $this->loadFromSession($session, $tag);
         }
     }
 
@@ -125,19 +132,19 @@ class Token
     /**
      * Fetch the payload from session
      *
-     * @param string @key
+     * @param string $tag
      * @return void
      */
-    protected function loadFromSession($session, string $key)
+    protected function loadFromSession($session, string $tag)
     {
-        $this->payload = json_decode($session->get($key), true) ?? [];
+        $this->payload = json_decode($session->get($tag), true) ?? [];
         $this->updateProperties();
         $this->loaded = ($this->payload) ? true : false;
     }
 
     /**
      * Flush all the content and session of the instance
-     * left only with phone number, key and text
+     * left only with phone number, tag and text
      *
      * @return self $this;
      */
@@ -153,7 +160,7 @@ class Token
         $this->payload = [];
 
         if (($session = $this->getRequest()->session())) {
-            $session->forget($this->key);
+            $session->forget($this->tag);
         }
 
         return $this;
@@ -170,7 +177,7 @@ class Token
             return false;
         }
 
-        $this->key = $this->payload['key'];
+        $this->tag = $this->payload['tag'];
         $this->pin_id = $this->payload['pin_id'];
         $this->pin = $this->payload['pin'] ?? null;
         $this->expires_at = Date::parse($this->payload['expires_at']);
@@ -242,20 +249,30 @@ class Token
      */
     public function id()
     {
-        if ($this->loaded) {
+        if (!$this->loaded) {
             return false;
         }
         return $this->pin_id;
     }
 
     /**
-     * Get the key of the instance
+     * Get the tag of the instance
      *
      * @return string
      */
-    public function key()
+    public function tag()
     {
-        return $this->key;
+        return $this->tag;
+    }
+
+    /**
+     * Check token instance is loaded
+     *
+     * @return bool
+     */
+    public function isLoaded(): bool
+    {
+        return $this->loaded;
     }
 
     /**
@@ -264,8 +281,8 @@ class Token
      */
     public function pin()
     {
-        if ($this->loaded) {
-            return false;
+        if (!$this->loaded || !$this->in_app) {
+            return null;
         }
         return $this->pin;
     }
@@ -275,8 +292,12 @@ class Token
      *
      * @return string
      */
-    public function signature()
+    public function signature(): string
     {
+        if (empty($this->payload)) {
+            return '';
+        }
+
         return $this->signature = Crypt::encryptString(json_encode($this->payload ?? []));
     }
 
@@ -291,9 +312,9 @@ class Token
             return false;
         }
 
-        $token = Termii::token();
+        $token = $this->termii->token();
 
-        $options = $this->pin_options + $options;
+        $options = array_merge($this->pin_options, $options);
 
         if ($this->in_app) {
             $data = $token->sendInAppToken($this->phonenumber, $options);
@@ -301,7 +322,7 @@ class Token
             $data = $token->sendToken($this->phonenumber, $this->text, $options);
         }
 
-        $this->payload['key'] = $this->key;
+        $this->payload['tag'] = $this->tag;
 
         if ($this->in_app) {
             $this->payload['pin_id'] = $data['data']['pin_id'];
@@ -321,7 +342,7 @@ class Token
         $this->loaded = true;
 
         if (($session = $this->getRequest()->session())) {
-            $session->put($this->key, json_encode($this->payload));
+            $session->put($this->tag, json_encode($this->payload));
         }
 
         return $this;
@@ -346,17 +367,16 @@ class Token
      *
      * @param string
      */
-    public function verify(string $pin)
+    public function validate(string $pin)
     {
         if (!is_int($pin) && !is_string($pin)) {
             return false;
         }
 
         if ($this->in_app) {
-            return ($this->pin === $pin);
+            return ($this->pin == $pin);
         } else {
-            $token = Termii::token();
-            return $token->verified($this->pin_id, $pin);
+            return $this->termii->token()->verified($this->pin_id, $pin);
         }
     }
 

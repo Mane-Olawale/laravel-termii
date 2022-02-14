@@ -47,7 +47,7 @@ class Termii
      */
     public function verify(string $key, string $signature = null)
     {
-        return new Entities\Token($key, $signature);
+        return new Entities\Token($this, $key, $signature);
     }
 
     /**
