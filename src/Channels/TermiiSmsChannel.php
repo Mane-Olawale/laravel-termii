@@ -29,7 +29,7 @@ class TermiiSmsChannel
      * @param  string  $from
      * @return void
      */
-    public function __construct( Client $termii, string $from)
+    public function __construct(Client $termii, string $from)
     {
         $this->from = $from;
         $this->termii = $termii;
@@ -54,12 +54,10 @@ class TermiiSmsChannel
             $message = new TermiiMessage($message);
         }
 
-        $client = ($message->client instanceof Client)? $message->client : $this->termii;
+        $client = ($message->client instanceof Client) ? $message->client : $this->termii;
 
         $result = $client->sms->send($to, $message->getContent(), $message->from ?? $this->from, $message->channel);
 
         return $result;
-
     }
-
 }

@@ -47,7 +47,7 @@ abstract class Message
      * @param  string  $content
      * @return void
      */
-    public function __construct( string $content = '')
+    public function __construct(string $content = '')
     {
         $this->content = $content;
     }
@@ -56,9 +56,9 @@ abstract class Message
      * Set the message content.
      *
      * @param  string  $content
-     * @return $this
+     * @return self
      */
-    public function content( string $content)
+    public function content(string $content): self
     {
         $this->content = $content;
 
@@ -69,9 +69,9 @@ abstract class Message
      * Set the sender id, Device id or phone number the message should be sent from.
      *
      * @param  string  $from
-     * @return $this
+     * @return self
      */
-    public function from($from)
+    public function from($from): self
     {
         $this->from = $from;
 
@@ -82,9 +82,9 @@ abstract class Message
      * Set the message channel.
      *
      * @param  string  $from
-     * @return $this
+     * @return self
      */
-    public function channel( string $channel)
+    public function channel(string $channel): self
     {
         $this->channel = $channel;
 
@@ -94,9 +94,9 @@ abstract class Message
     /**
      * Set the message type.
      *
-     * @return $this
+     * @return self
      */
-    public function unicode()
+    public function unicode(): self
     {
         $this->type('unicode');
 
@@ -107,9 +107,9 @@ abstract class Message
      * Set the message type.
      *
      * @param  string  $type
-     * @return $this
+     * @return self
      */
-    public function type(string $type)
+    public function type(string $type): self
     {
         $this->type = $type;
 
@@ -120,16 +120,21 @@ abstract class Message
      * Set the Termii client instance.
      *
      * @param  \ManeOlawale\Termii\Client  $client
-     * @return $this
+     * @return self
      */
-    public function client(Client $client)
+    public function client(Client $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    public function getContent() : string
+    /**
+     * Get the text content of the message
+     *
+     * @return string
+     */
+    public function getContent(): string
     {
         return $this->content;
     }

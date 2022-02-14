@@ -16,20 +16,22 @@ class TermiiMessage extends Message
      * Add a line of text to the message content.
      *
      * @param  string  $text
-     * @return $this
+     * @return self
      */
-    public function line( string $text = null)
+    public function line(string $text = null): self
     {
         $this->lines[] = $text;
-
         return $this;
     }
 
-    public function getContent() : string
+    /**
+     * Get the text content of the message
+     *
+     * @return string
+     */
+    public function getContent(): string
     {
-        $lines = (($this->content)? "\n" : "").implode( "\n",$this->lines);
-
-        return trim($this->content.$lines);
+        $lines = (($this->content) ? "\n" : "") . implode("\n", $this->lines);
+        return trim($this->content . $lines);
     }
-
 }

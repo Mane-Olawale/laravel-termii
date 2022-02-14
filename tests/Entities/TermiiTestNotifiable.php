@@ -14,5 +14,4 @@ class TermiiTestNotifiable
     {
         return $this->phone;
     }
-    
 }

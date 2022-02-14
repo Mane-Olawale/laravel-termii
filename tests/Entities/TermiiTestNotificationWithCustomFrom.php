@@ -2,7 +2,6 @@
 
 namespace ManeOlawale\Laravel\Termii\Tests\Entities;
 
-use ManeOlawale\Termii\Client;
 use Illuminate\Notifications\Notification;
 use ManeOlawale\Laravel\Termii\Messages\TermiiMessage;
 
