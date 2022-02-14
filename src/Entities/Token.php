@@ -371,7 +371,7 @@ class Token
      *
      * @param string
      */
-    public function validate(string $pin)
+    public function verify(string $pin)
     {
         if (!is_int($pin) && !is_string($pin)) {
             return false;

@@ -6,7 +6,6 @@ use ManeOlawale\Termii\Client;
 
 class Termii
 {
-
     /**
      * The custom Termii client instance.
      *
@@ -19,7 +18,7 @@ class Termii
      *
      * @param \ManeOlawale\Termii\Client $client
      */
-    public function __construct( Client $client )
+    public function __construct(Client $client)
     {
         $this->client = $client;
     }
@@ -41,11 +40,11 @@ class Termii
 
     /**
      * Make new teken
-     * 
+     *
      * @param string $key
      * @param string $signature
      */
-    public function verify(string $key, string $signature = null)
+    public function otp(string $key, string $signature = null)
     {
         return new Entities\Token($this, $key, $signature);
     }
@@ -67,5 +66,4 @@ class Termii
     {
         return $this->client->sms->send($to, $message, $from, $channel);
     }
-
 }
