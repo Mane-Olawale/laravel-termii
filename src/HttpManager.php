@@ -12,9 +12,7 @@
 namespace ManeOlawale\Laravel\Termii;
 
 use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Facades\App;
 use Psr\Http\Message\ResponseInterface;
-use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Http;
 use ManeOlawale\Laravel\Termii\Termii;
 use ManeOlawale\Termii\HttpClient\HttpManagerInterface;
