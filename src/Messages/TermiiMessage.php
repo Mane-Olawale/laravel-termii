@@ -4,7 +4,6 @@ namespace ManeOlawale\Laravel\Termii\Messages;
 
 class TermiiMessage extends Message
 {
-
     /**
      * Array of content lines.
      *
