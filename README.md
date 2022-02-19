@@ -1,6 +1,6 @@
 # Termii Laravel Package
 
-A package for intergarting termii services with your laravel application.
+A package for integrating termii services with your laravel application.
 
 Uses [Termii Client](https://github.com/Mane-Olawale/termii).
 
