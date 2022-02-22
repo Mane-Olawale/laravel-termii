@@ -124,8 +124,14 @@ $message = new TermiiMessage('Olawale wants to connect with you.');
 
 # Using the line method
 $message = (new TermiiMessage)
-    ->line('Olawale sent you a package on our platform.')
-    ->line('Thank you for using our application!');
+    ->line('Debit Alert!.')
+    ->line('Acct: *******324')
+    ->line('Amt: 21,500.00')
+    ->line('DESC: squander am!')
+    ->line('Trx: 37373-3843-4')
+    ->line('Time: 22/02/2022|4:32 PM')
+    ->line('Avail Bal: 3,642,873.00')
+    ->line('Total Bal: 3,742,873.00');
 
 # Overwriting the content
 $message->content('Olawale is your first contributor.');
