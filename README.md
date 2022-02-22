@@ -51,7 +51,7 @@ TERMII_USER_AGENT="${APP_NAME}"
 ```
 
 
-# Basic usage
+## Basic usage
 
 Send sms using the termii facade class
 
@@ -66,3 +66,95 @@ Termii::send('2347041945964', 'Hello World!');
 
 Termii::send('2347041945964', 'Hello World!', 'Olawale', 'generic');
 ```
+
+
+## Notification channel
+
+This package provides you with a notification channel that enables you to send sms through the notification feature of laravel like so:
+
+*Create a notification class*
+
+```bash
+php artisan make:notification WelcomeText
+```
+
+*Add termii channel to the notification*
+```php
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+use ManeOlawale\Laravel\Termii\Messages\TermiiMessage;
+
+class WelcomeText extends Notification
+{
+    use Queueable;
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function via($notifiable)
+    {
+        return ['termii'];
+    }
+
+    /**
+     * Get the termii sms representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return \ManeOlawale\Laravel\Termii\Messages\TermiiMessage
+     */
+    public function toTermii($notifiable)
+    {
+        return (new TermiiMessage)
+                    ->line('The introduction to the notification.')
+                    ->line('Thank you for using our application!');
+    }
+}
+```
+
+### More on `TermiiMessage`
+
+Working with the message content:
+
+```php
+# Using constructor
+$message = new TermiiMessage('Olawale wants to connect with you.');
+
+# Using the line method
+$message = (new TermiiMessage)
+    ->line('Olawale sent you a package on our platform.')
+    ->line('Thank you for using our application!');
+
+# Overwriting the content
+$message->content('Olawale is your first contributor.');
+
+# Getting the content
+$message->getContent();
+
+```
+
+You can configure the sms sent through the notification channel by chaining methods to the TermiiMessage object like so:
+
+```php
+    /**
+     * Get the termii sms representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return \ManeOlawale\Laravel\Termii\Messages\TermiiMessage
+     */
+    public function toTermii($notifiable)
+    {
+        return (new TermiiMessage('Someone wants to connect with you.'))
+            ->from('sender_id')
+            ->channel('generic')
+            ->type('unicode')
+            ->unicode()
+            ->line('Thank you for using our application!');
+    }
+```
+> *Note* 
+> - The default message type is unicode as at the time of writing, but you can use the `TermiiMessage::type()` method to set any type that may later be introduced.
+>
+> - If these configurations are not done the default configuration will be used.
