@@ -67,6 +67,31 @@ Termii::send('2347041945964', 'Hello World!');
 Termii::send('2347041945964', 'Hello World!', 'Olawale', 'generic');
 ```
 
+## Services
+
+You can access the client services directly by calling them as function on the facade class
+
+```php
+<?php
+
+use ManeOlawale\Laravel\Termii\Facades\Termii;
+
+// @return \ManeOlawale\Termii\Api\Sender
+Termii::sender();
+// @return \ManeOlawale\Termii\Api\Sms
+Termii::sms();
+// @return \ManeOlawale\Termii\Api\Token
+Termii::token();
+// @return \ManeOlawale\Termii\Api\Insights
+Termii::insights();
+
+// On the client
+$client->sender->request('Olawale', 'Friendship based notification', 'Olawale INC');
+
+// On the facade class
+Termii::sender()->request('Olawale', 'Friendship based notification', 'Olawale INC');
+```
+
 
 ## Notification channel
 
