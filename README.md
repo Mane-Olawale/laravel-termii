@@ -305,3 +305,248 @@ $otp = Termii::OTP('login_account')->to('2347041945964')
 $otp = Termii::OTP('login_account')->to('2347041945964')
     ->text('{pin} is your account activation code')->inApp()->start();
 ```
+
+## Testing
+
+This package support TDD in so you can build fast with confidence.
+
+### Endpoint aliases
+
+Endpoints are represented with aliases for easy mocking and asserting. these are the available aliases:
+
+| Alias         | Endpoint                           |
+| :---          | :---                               |
+|sender         | api/sender-id                      |
+|request        | api/sender-id/request              |
+|send           | api/sms/send                       |
+|number         | api/sms/number/send                |
+|template       | api/send/template                  |
+|otp            | api/sms/otp/send                   |
+|verify         | api/sms/otp/verify                 |
+|inapp          | api/sms/otp/generate               |
+|balance        | api/get-balance                    |
+|search         | api/insight/number/query           |
+|inbox          | api/sms/inbox                      |
+
+### Mocking and Sequence
+
+**Sequence**
+Sequence lets you create a collection of responses that will start from the first element when the list is excusted.
+
+```php
+use GuzzleHttp\Psr7\Response;
+use ManeOlawale\Laravel\Termii\Testing\Sequence;
+
+    $sequence = Sequence::create(
+        new Response(200),
+        new Response(300),
+        new Response(400)
+    );
+
+    $sequence->next(); // new Response(200);
+    $sequence->next(); // new Response(300);
+    $sequence->next(); // new Response(400);
+    $sequence->next(); // new Response(200);
+
+    $sequence->count(); // int: 3
+
+    # This is the number of times the sequence start all over.
+    $sequence->rotation(); // int: 1
+```
+
+**Mocking with sequence**
+
+The example below will mock the `send` endpoint with a response.
+
+```php
+use GuzzleHttp\Psr7\Response;
+use ManeOlawale\Laravel\Termii\Facades\Termii;
+use ManeOlawale\Laravel\Termii\Testing\Sequence;
+
+Termii::fake();
+
+Termii::mock('send', Sequence::create(new Response(
+    200,
+    ['Content-Type' => 'application/json'],
+    json_encode($data = [
+        'message_id' => '9122821270554876574',
+        'message' => 'Successfully Sent',
+        'balance' => 9,
+        'user' => 'Peter Mcleish'
+    ])
+)));
+
+$this->get('/send_text'); // Let us assume message was sent twice
+
+Termii::assertSent('send');
+
+# Assert the message was sent twice
+Termii::assertSentTimes('send', 2);
+```
+> **Note:** mocking works for all aliases and not only for `send`
+
+### Asserting
+
+**Assert no sent**
+
+```php
+use GuzzleHttp\Psr7\Response;
+use ManeOlawale\Laravel\Termii\Facades\Termii;
+use ManeOlawale\Laravel\Termii\Testing\Sequence;
+
+Termii::fake();
+
+$this->get('/send_text'); // Let us assume no message was sent
+
+Termii::assertNotSent('send');
+
+# Assert the message was sent twice
+Termii::assertSentTimes('send', 0);
+```
+> **Note:** This works for all aliases and not only for `send`
+
+**Assert successful and Failed requests**
+
+In this example we will assert the endpoint responded with response code within the range of `100 - 299` or Not.
+
+```php
+use GuzzleHttp\Psr7\Response;
+use ManeOlawale\Laravel\Termii\Facades\Termii;
+use ManeOlawale\Laravel\Termii\Testing\Sequence;
+
+Termii::fake();
+
+Termii::mock('send', Sequence::create(new Response(
+    200,
+    ['Content-Type' => 'application/json'], '{}'
+), new Response(
+    200,
+    ['Content-Type' => 'application/json'], '{}'
+), new Response(
+    422,
+    ['Content-Type' => 'application/json'], '{}'
+)));
+
+/** 
+ * Let us assume message was sent three times.
+ * This means one wont be successful
+*/
+$this->get('/send_text');
+
+# For successful requests
+Termii::assertSentSuccessful('send');
+# Assert the message was sent successfully twice
+Termii::assertSentSuccessfulTimes('send', 2);
+
+# For failed requests
+Termii::assertSentFailed('send');
+# Assert the message failed once
+Termii::assertSentFailedTimes('send', 1);
+```
+> **Note:** This works for all aliases and not only for `send`
+
+### Deep Assertion
+
+You can assert the request and response object deeper using the `Termii::assert()` method.
+
+**With Closure**
+
+```php
+use GuzzleHttp\Psr7\Response;
+use ManeOlawale\Laravel\Termii\Facades\Termii;
+use ManeOlawale\Laravel\Termii\Testing\Sequence;
+
+Termii::fake();
+
+Termii::mock('send', Sequence::create(new Response(
+    200,
+    ['Content-Type' => 'application/json'],
+    json_encode([
+        'message_id' => '9122821270554876574',
+        'message' => 'Successfully Sent',
+        'balance' => 9,
+        'user' => 'Peter Mcleish'
+    ])
+)));
+
+$this->get('/send_text'); // Let us assume message was sent once
+
+Termii::assert('send', function ($pair) {
+    //Correct alias
+    $this->assertSame('send', $pair['alias']);
+
+    //Check if what happened between the request and response was successful
+    $this->assertTrue($pair['successful']);
+});
+```
+> **Note:**
+> - This works for all aliases and not only for `send`
+> - This only assert the first pair of request and response so if you want more assertion use Sequence below.
+
+**With Sequence**
+
+```php
+use GuzzleHttp\Psr7\Response;
+use ManeOlawale\Laravel\Termii\Facades\Termii;
+use ManeOlawale\Laravel\Termii\Testing\Sequence;
+
+Termii::fake();
+
+Termii::mock('send', Sequence::create(new Response(
+    200,
+    ['Content-Type' => 'application/json'], '{}'
+), new Response(
+    422,
+    ['Content-Type' => 'application/json'], '{}'
+)));
+
+$this->get('/send_text'); // Let us assume message was sent twice
+
+Termii::assert('send', Sequence::create(
+    function ($pair) {
+        //Correct alias
+        $this->assertSame('send', $pair['alias']);
+
+        //Check if what happened between the request and response was successful
+        $this->assertTrue($pair['successful']);
+    },
+    function ($pair) {
+        //Correct alias
+        $this->assertSame('send', $pair['alias']);
+
+        //Check if what happened between the request and response was not successful
+        $this->assertNotTrue($pair['successful']);
+    }
+));
+```
+
+### Fallback response
+
+If you do not mork the endpoint that will be invoked in your application, the default fallback response will be an empty successful json response. but you can change it using the `Termii::fallbackResponse()` 
+
+```php
+use GuzzleHttp\Psr7\Response;
+use ManeOlawale\Laravel\Termii\Facades\Termii;
+
+Termii::fake();
+
+Termii::fallbackResponse(new Response(
+    400,
+    ['Content-Type' => 'application/json'],
+    json_encode([
+        'message' => 'Error'
+    ])
+));
+
+$this->get('/send_text'); // Let us assume message was sent once
+
+# Assert the failed request
+Termii::assertSentFailed('send');
+# Assert the message failed once
+Termii::assertSentFailedTimes('send', 1);
+```
+
+> **Note**
+> Testing is important in your application. Every part of your application should be tested, most especially the part integrating with other systems that you do not maintain.
+> This is why i take the pain of providing this package with TDD support so you can create and assert the behaviour of your laravel application just to make sure everything is working as it should.
+__~ Olawale__
