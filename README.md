@@ -574,4 +574,4 @@ Termii::assertSentFailedTimes('send', 1);
 > **Note**
 > Testing is important in your application. Every part of your application should be tested, most especially the part integrating with other systems that you do not maintain.
 > This is why i take the pain of providing this package with TDD support so you can create and assert the behaviour of your laravel application just to make sure everything is working as it should.
-__~ Olawale__
+_**~ Olawale**_
