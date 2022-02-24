@@ -326,6 +326,13 @@ class Token
             $data = $token->sendToken($this->phonenumber, $this->text, $options);
         }
 
+        if (
+            ($this->in_app && !isset($data['data']['pin_id'])) ||
+            (!$this->in_app && !isset($data['pinId']))
+        ) {
+            return $this;
+        }
+
         $this->payload['tag'] = $this->tag;
 
         if ($this->in_app) {
