@@ -1,5 +1,5 @@
 <p align="center">
-    <img title="Termii" src="https://raw.githubusercontent.com/Mane-Olawale/laravel-termii/docs/larave-termii.png"/>
+    <img title="Termii" src="https://raw.githubusercontent.com/Mane-Olawale/laravel-termii/main/larave-termii.png"/>
 </p>
 
 <p align="center">
