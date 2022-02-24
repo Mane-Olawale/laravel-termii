@@ -61,7 +61,7 @@ class TermiiTest extends TestCase
     {
         $termii = new Termii(new Client('{Your api key goes here}'));
 
-        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->otp('forgot_password'));
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP('forgot_password'));
         $this->assertNotTrue($token->isLoaded());
         $this->assertEmpty($token->id());
     }
@@ -80,7 +80,7 @@ class TermiiTest extends TestCase
         Session::put($payload['tag'], json_encode($payload));
         $termii = new Termii(new Client('{Your api key goes here}'));
 
-        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->otp($payload['tag']));
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP($payload['tag']));
         $this->assertTrue($token->isLoaded());
         $this->assertTrue($token->isValid());
         $this->assertTrue($token->id() === $payload['pin_id']);
@@ -101,7 +101,7 @@ class TermiiTest extends TestCase
         Session::put($payload['tag'], json_encode($payload));
         $termii = new Termii(new Client('{Your api key goes here}'));
 
-        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->otp($payload['tag']));
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP($payload['tag']));
         $this->assertTrue($token->isLoaded());
         $this->assertNotTrue($token->isValid());
         $this->assertTrue($token->id() === $payload['pin_id']);
@@ -130,7 +130,7 @@ class TermiiTest extends TestCase
             ])
         )));
 
-        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->otp($payload['tag']));
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP($payload['tag']));
         $this->assertTrue($token->isLoaded());
         $this->assertTrue($token->isValid());
         $this->assertTrue($token->verify($payload['pin']));
@@ -161,7 +161,7 @@ class TermiiTest extends TestCase
             ])
         )));
 
-        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->otp($payload['tag']));
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP($payload['tag']));
         $this->assertTrue($token->isLoaded());
         $this->assertTrue($token->isValid());
         $this->assertTrue($token->verify('123456'));
@@ -181,7 +181,7 @@ class TermiiTest extends TestCase
             ])
         )));
 
-        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->otp('forgot_password'));
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP('forgot_password'));
         $token->to('2347041945964')->text('{pin} is your account activation code')->start();
         $this->assertTrue($token->isLoaded());
         $this->assertTrue($token->isValid());
@@ -205,7 +205,7 @@ class TermiiTest extends TestCase
             ])
         )));
 
-        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->otp('forgot_password'));
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP('forgot_password'));
         $token->to('2347041945964')->text('{pin} is your account activation code')->inApp()->start();
         $this->assertTrue($token->isLoaded());
         $this->assertTrue($token->isValid());
@@ -232,7 +232,7 @@ class TermiiTest extends TestCase
         $sig = Crypt::encryptString(json_encode($payload));
         $termii = new Termii(new Client('{Your api key goes here}'));
 
-        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->otp($payload['tag'], $sig));
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP($payload['tag'], $sig));
         $this->assertTrue($token->isLoaded());
         $this->assertTrue($token->isValid());
         $this->assertTrue($token->id() === $payload['pin_id']);
@@ -253,7 +253,7 @@ class TermiiTest extends TestCase
         $sig = Crypt::encryptString(json_encode($payload));
         $termii = new Termii(new Client('{Your api key goes here}'));
 
-        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->otp($payload['tag'], $sig));
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP($payload['tag'], $sig));
         $this->assertTrue($token->isLoaded());
         $this->assertNotTrue($token->isValid());
         $this->assertTrue($token->id() === $payload['pin_id']);
@@ -282,7 +282,7 @@ class TermiiTest extends TestCase
             ])
         )));
 
-        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->otp($payload['tag'], $sig));
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP($payload['tag'], $sig));
         $this->assertTrue($token->isLoaded());
         $this->assertTrue($token->isValid());
         $this->assertTrue($token->verify($payload['pin']));
@@ -313,7 +313,7 @@ class TermiiTest extends TestCase
             ])
         )));
 
-        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->otp($payload['tag'], $sig));
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP($payload['tag'], $sig));
         $this->assertTrue($token->isLoaded());
         $this->assertTrue($token->isValid());
         $this->assertTrue($token->verify('123456'));

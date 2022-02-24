@@ -118,7 +118,7 @@ php artisan make:notification WelcomeText
 ```php
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use ManeOlawale\Laravel\Termii\Messages\TermiiMessage;
+use ManeOlawale\Laravel\Termii\Messages\Message as TermiiMessage;
 
 class WelcomeText extends Notification
 {
@@ -139,7 +139,7 @@ class WelcomeText extends Notification
      * Get the termii sms representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \ManeOlawale\Laravel\Termii\Messages\TermiiMessage
+     * @return \ManeOlawale\Laravel\Termii\Messages\Message
      */
     public function toTermii($notifiable)
     {
@@ -184,7 +184,7 @@ You can configure the sms sent through the notification channel by chaining meth
      * Get the termii sms representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \ManeOlawale\Laravel\Termii\Messages\TermiiMessage
+     * @return \ManeOlawale\Laravel\Termii\Messages\Message
      */
     public function toTermii($notifiable)
     {

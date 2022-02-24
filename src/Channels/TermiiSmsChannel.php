@@ -2,7 +2,7 @@
 
 namespace ManeOlawale\Laravel\Termii\Channels;
 
-use ManeOlawale\Laravel\Termii\Messages\TermiiMessage;
+use ManeOlawale\Laravel\Termii\Messages\Message;
 use Illuminate\Notifications\Notification;
 use ManeOlawale\Termii\Client;
 
@@ -51,7 +51,7 @@ class TermiiSmsChannel
         $message = $notification->toTermii($notifiable);
 
         if (is_string($message)) {
-            $message = new TermiiMessage($message);
+            $message = new Message($message);
         }
 
         $client = ($message->client instanceof Client) ? $message->client : $this->termii;

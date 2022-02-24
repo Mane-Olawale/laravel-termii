@@ -64,7 +64,7 @@ class Termii
      * @param string $key
      * @param string $signature
      */
-    public function otp(string $key, string $signature = null)
+    public function OTP(string $key, string $signature = null)
     {
         return new Entities\Token($this, $key, $signature);
     }
