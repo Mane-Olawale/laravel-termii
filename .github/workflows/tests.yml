@@ -1,4 +1,4 @@
-name: Laravel Termii Tests
+name: Tests
 
 on:
   pull_request:
