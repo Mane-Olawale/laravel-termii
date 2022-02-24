@@ -65,9 +65,9 @@ class TestingTest extends TestCase
         ]);
 
         $this->assertInstanceOf(FakeHttpManager::class, $termii->client()->getHttpManager());
-        ($token = $termii->otp('email'))->to('2347041945964')
+        ($token = $termii->OTP('email'))->to('2347041945964')
             ->text('{pin} is your account activation code')->inApp()->start();
-        ($token2 = $termii->otp('login'))->to('2347041945964')
+        ($token2 = $termii->OTP('login'))->to('2347041945964')
             ->text('{pin} is your account activation code')->inApp()->start();
 
         $this->assertEquals($data['data']['pin_id'], $token->id());
@@ -96,7 +96,7 @@ class TestingTest extends TestCase
             ])
         )));
 
-        ($termii->otp('email'))->to('2347041945964')
+        ($termii->OTP('email'))->to('2347041945964')
             ->text('{pin} is your account activation code')->start();
 
             $termii->assertNotSent('send');
