@@ -150,6 +150,27 @@ class WelcomeText extends Notification
 }
 ```
 
+**Add route to user**
+So the notification channel can get the user`s phone number.
+
+```php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+class User extends Authenticatable //implements MustVerifyEmail
+{
+    use HasFactory, Notifiable;
+
+    public function routeNotificationForTermii()
+    {
+        return $this->phone;
+    }
+}
+```
+
 ### More on `TermiiMessage`
 
 Working with the message content:
