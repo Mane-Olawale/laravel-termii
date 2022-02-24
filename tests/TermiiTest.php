@@ -214,6 +214,32 @@ class TermiiTest extends TestCase
         $this->assertTrue($token->pin() === $data['data']['otp']);
     }
 
+    public function testVerifyStartFailed()
+    {
+        $termii = new Termii($this->getClientWithMockedResponse(new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            '{}'
+        )));
+
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP('forgot_password'));
+        $token->to('2347041945964')->text('{pin} is your account activation code')->inApp()->start();
+        $this->assertNotTrue($token->isLoaded());
+    }
+
+    public function testVerifyStartInappFailed()
+    {
+        $termii = new Termii($this->getClientWithMockedResponse(new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            '{}'
+        )));
+
+        $this->assertInstanceOf(EntitiesToken::class, $token = $termii->OTP('forgot_password'));
+        $token->to('2347041945964')->text('{pin} is your account activation code')->inApp()->start();
+        $this->assertNotTrue($token->isLoaded());
+    }
+
 
     /*  ---------- SIGNATURE ---------- */
 

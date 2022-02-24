@@ -313,7 +313,7 @@ class Token
     public function start(array $options = [])
     {
         if ($this->loaded) {
-            return false;
+            return $this;
         }
 
         $token = $this->termii->token();
@@ -324,6 +324,13 @@ class Token
             $data = $token->sendInAppToken($this->phonenumber, $options);
         } else {
             $data = $token->sendToken($this->phonenumber, $this->text, $options);
+        }
+
+        if (
+            ($this->in_app && !isset($data['data']['pin_id'])) ||
+            (!$this->in_app && !isset($data['pinId']))
+        ) {
+            return $this;
         }
 
         $this->payload['tag'] = $this->tag;
