@@ -313,7 +313,7 @@ class Token
     public function start(array $options = [])
     {
         if ($this->loaded) {
-            return false;
+            return $this;
         }
 
         $token = $this->termii->token();
