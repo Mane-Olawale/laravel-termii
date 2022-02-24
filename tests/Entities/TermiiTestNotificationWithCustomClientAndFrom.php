@@ -4,7 +4,7 @@ namespace ManeOlawale\Laravel\Termii\Tests\Entities;
 
 use ManeOlawale\Termii\Client;
 use Illuminate\Notifications\Notification;
-use ManeOlawale\Laravel\Termii\Messages\TermiiMessage;
+use ManeOlawale\Laravel\Termii\Messages\Message;
 
 class TermiiTestNotificationWithCustomClientAndFrom extends Notification
 {
@@ -18,6 +18,6 @@ class TermiiTestNotificationWithCustomClientAndFrom extends Notification
 
     public function toTermii($notifiable)
     {
-        return (new TermiiMessage('Hello world'))->client($this->client)->from('Adedotun');
+        return (new Message('Hello world'))->client($this->client)->from('Adedotun');
     }
 }
