@@ -1,3 +1,14 @@
+<p align="center">
+    <img title="Termii" src="https://raw.githubusercontent.com/Mane-Olawale/laravel-termii/docs/larave-termii.png"/>
+</p>
+
+<p align="center">
+<a href="https://github.com/Mane-Olawale/laravel-termii"><img src="https://github.com/Mane-Olawale/laravel-termii/actions/workflows/tests.yml/badge.svg" alt="Github"></a>
+<a href="https://packagist.org/packages/mane-olawale/laravel-termii"><img src="https://img.shields.io/packagist/dt/mane-olawale/laravel-termii" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/mane-olawale/laravel-termii"><img src="https://img.shields.io/packagist/v/mane-olawale/laravel-termii" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/mane-olawale/laravel-termii"><img src="https://img.shields.io/packagist/l/mane-olawale/laravel-termii" alt="License"></a>
+</p>
+
 # Termii Laravel Package
 
 A package for integrating termii services with your laravel application.
