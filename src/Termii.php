@@ -91,6 +91,7 @@ class Termii
      * Switch termii to test mode
      *
      * @param array
+     * @return \ManeOlawale\Laravel\Termii\Testing\TermiiFake
      */
     public function fake(array $fakes = null)
     {
@@ -115,7 +116,7 @@ class Termii
      *
      * @param string $alias
      * @param \ManeOlawale\Laravel\Termii\Testing\Sequence $sequence
-     * @return void
+     * @return self
      */
     public function mock(string $alias, Sequence $sequence = null)
     {
