@@ -33,7 +33,7 @@ class Sequence
      *
      * @param array ...$item
      *
-     * @return self
+     * @return $this
      */
     public static function create(...$item)
     {

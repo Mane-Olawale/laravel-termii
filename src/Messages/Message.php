@@ -15,7 +15,7 @@ class Message extends BaseMessage
      * Add a line of text to the message content.
      *
      * @param  string  $text
-     * @return self
+     * @return $this
      */
     public function line(string $text = null): self
     {

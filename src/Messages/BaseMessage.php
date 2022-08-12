@@ -56,7 +56,7 @@ abstract class BaseMessage
      * Set the message content.
      *
      * @param  string  $content
-     * @return self
+     * @return $this
      */
     public function content(string $content): self
     {
@@ -69,7 +69,7 @@ abstract class BaseMessage
      * Set the sender id, Device id or phone number the message should be sent from.
      *
      * @param  string  $from
-     * @return self
+     * @return $this
      */
     public function from($from): self
     {
@@ -82,7 +82,7 @@ abstract class BaseMessage
      * Set the message channel.
      *
      * @param  string  $from
-     * @return self
+     * @return $this
      */
     public function channel(string $channel): self
     {
@@ -94,7 +94,7 @@ abstract class BaseMessage
     /**
      * Set the message type.
      *
-     * @return self
+     * @return $this
      */
     public function unicode(): self
     {
@@ -107,7 +107,7 @@ abstract class BaseMessage
      * Set the message type.
      *
      * @param  string  $type
-     * @return self
+     * @return $this
      */
     public function type(string $type): self
     {
@@ -120,7 +120,7 @@ abstract class BaseMessage
      * Set the Termii client instance.
      *
      * @param  \ManeOlawale\Termii\Client  $client
-     * @return self
+     * @return $this
      */
     public function client(Client $client): self
     {

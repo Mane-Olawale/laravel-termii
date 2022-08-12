@@ -116,7 +116,7 @@ class Termii
      *
      * @param string $alias
      * @param \ManeOlawale\Laravel\Termii\Testing\Sequence $sequence
-     * @return self
+     * @return $this
      */
     public function mock(string $alias, Sequence $sequence = null)
     {
