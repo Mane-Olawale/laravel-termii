@@ -150,7 +150,7 @@ class Token
      * Flush all the content and session of the instance
      * left only with phone number, tag and text
      *
-     * @return self $this;
+     * @return $this;
      */
     public function flush()
     {
@@ -193,7 +193,7 @@ class Token
     /**
      * Make the token an in-app token, Only for non-loaded instance of this class
      *
-     * @return self $this
+     * @return $this
      */
     public function inApp()
     {
@@ -209,7 +209,7 @@ class Token
     /**
      * Set the phonenumber of the token
      *
-     * @return self $this
+     * @return $this
      */
     public function to(string $phonenumber)
     {
@@ -224,7 +224,7 @@ class Token
     /**
      * Set the text of the token
      *
-     * @return self $this
+     * @return $this
      */
     public function text(string $text)
     {
@@ -239,7 +239,7 @@ class Token
     /**
      * Dynamic function calls to set the pin option
      *
-     * @return self $this
+     * @return $this
      */
     public function __call(string $name, array $parameters)
     {

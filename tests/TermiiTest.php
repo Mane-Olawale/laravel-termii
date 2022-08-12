@@ -30,7 +30,16 @@ class TermiiTest extends TestCase
             ])
         )));
 
-        $this->assertEquals($data, $termii->send('2347041945964', 'Lotus give me my phone', 'Olawale', 'generic'));
+        /**
+         * @var \ManeOlawale\RestResponse\AbstractResponse
+         */
+        $response = $termii->send('2347041945964', 'Lotus give me my phone', 'Olawale', 'generic');
+        $this->assertEquals(
+            $data,
+            $response->toArray()
+        );
+
+        $this->assertSame($data['message_id'], $response['message_id']);
     }
 
     public function testGetServices()
