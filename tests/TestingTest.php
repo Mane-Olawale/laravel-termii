@@ -132,6 +132,34 @@ class TestingTest extends TestCase
         $termii->assertSentSuccessfulTimes('send', 2);
     }
 
+    public function testMockingDndSuccessful()
+    {
+        $termii = new Termii(new Client(
+            'key',
+            [
+                'sender_id' => 'Olawale',
+                'channel' => 'generic'
+            ]
+        ));
+
+        $termii->fake()->mock('dnd', Sequence::create(new Response(
+            404,
+            ['Content-Type' => 'application/json'],
+            json_encode([
+                'number' => '2347041945964',
+                'message' => 'Phone either not on DND or is not in our Database',
+                'status' => 'DND not active on phone number',
+                'dnd_active' => false,
+                'network' => '62130',
+                'network_code' => 'MTN Nigeria'
+            ])
+        )));
+
+        $termii->insights()->search('2347041945964');
+
+        $termii->assertSentFailed('dnd');
+    }
+
     public function testMockingAssertFailed()
     {
         $termii = new Termii(new Client(
