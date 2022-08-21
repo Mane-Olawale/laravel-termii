@@ -218,7 +218,8 @@ class TermiiFake
             'inapp' => 'api/sms/otp/generate',
             'balance' => 'api/get-balance',
             'search' => 'api/insight/number/query',
-            'inbox' => 'api/sms/inbox'
+            'inbox' => 'api/sms/inbox',
+            'dnd' => 'api/check/dnd'
         ];
     }
 }
