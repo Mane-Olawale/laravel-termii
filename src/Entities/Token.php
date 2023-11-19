@@ -4,7 +4,7 @@ namespace ManeOlawale\Laravel\Termii\Entities;
 
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use ManeOlawale\Laravel\Termii\Termii;
@@ -48,10 +48,16 @@ class Token
     public $pin;
 
     /**
-     * The pin itself, Only available after generation or resolving a token signature of in-app token
+     * The time it will expire
      * @var Carbon\Carbon
      */
     public $expires_at;
+
+    /**
+     * The time it was generated
+     * @var Carbon\Carbon
+     */
+    public $generated_at;
 
     /**
      * This flag indicates that the token is in-app token
@@ -184,8 +190,8 @@ class Token
         $this->tag = $this->payload['tag'];
         $this->pin_id = $this->payload['pin_id'];
         $this->pin = $this->payload['pin'] ?? null;
-        $this->expires_at = Date::parse($this->payload['expires_at']);
-        $this->generated_at = Date::parse($this->payload['generated_at']);
+        $this->expires_at = Carbon::parse($this->payload['expires_at']);
+        $this->generated_at = Carbon::parse($this->payload['generated_at']);
         $this->phonenumber = $this->payload['phonenumber'];
         $this->in_app = $this->payload['in_app'];
     }
@@ -345,9 +351,9 @@ class Token
             $this->payload['phonenumber'] =  $data['to'];
         }
 
-        $this->payload['expires_at'] = (string)Date::now()->addMinutes($options['time_to_live'] ??
-            Config::get('pin.time_to_live'));
-        $this->payload['generated_at'] = (string)Date::now();
+        $this->payload['expires_at'] = (string)Carbon::now()->addMinutes($options['time_to_live'] ??
+            Config::get('termii.pin.time_to_live'));
+        $this->payload['generated_at'] = (string)Carbon::now();
         $this->payload['in_app'] = $this->in_app;
         $this->updateProperties();
         $this->loaded = true;
@@ -370,7 +376,7 @@ class Token
             return false;
         }
 
-        return $this->pin_id && $this->expires_at > Date::now();
+        return $this->pin_id && $this->expires_at > Carbon::now();
     }
 
     /**
