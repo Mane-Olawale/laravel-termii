@@ -20,7 +20,7 @@ Uses [Termii Client](https://github.com/Mane-Olawale/termii).
 
 * PHP ^7.2|8.0
 * [Termii Client](https://github.com/Mane-Olawale/termii) ^1.2,
-* Laravel ^6.0|^7.0|^8.0
+* Laravel ^9.0|^10.0|^11.0|^12.0|^13.0
 
 ## Installation
 
